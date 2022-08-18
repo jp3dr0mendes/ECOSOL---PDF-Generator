@@ -1,0 +1,12 @@
+*.exe
+*.spec
+*.jpg
+*.png
+*.pyc
+*.docx
+*.pdf
+
+!Modelo de Diagnóstico_CTT.docx
+
+/build
+/dist
