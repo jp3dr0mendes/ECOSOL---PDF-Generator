@@ -4,7 +4,9 @@ import webbrowser
 import base64
 from PIL import ImageTk, Image
 from docx import Document
+from docx.shared import Cm,Pt
 from docx2pdf import convert
+import aspose.words as aw
 from reportlab.pdfgen import canvas
 # import fitz
 import os
@@ -34,8 +36,11 @@ class File(File_Functions):
             # print(paragraph)
             if '[Cliente]' in paragraph.text:
                 paragraph.text =  paragraph.text.replace('[Cliente]',self.client)
-            if '[Tabela de Clientes]' in paragraph.text:
-                self.table_clients_write()
+            if '[Tabela Cliente]' in paragraph.text:
+                print('espaço de tabela achado')
+                self.table_clients_write(paragraph)
+                # self.document.add_table(rows=1,cols=2)
+
         print(self.name)
         print(self.client)
         print('passou aqui')
@@ -63,8 +68,7 @@ class File(File_Functions):
         print(self.contents)
         print('pdf pages contents getted')
     #Function to make a client data table
-    def table_clients_write(self):
-        self.document.add_heading('Cliente Beneficiado',2)
+    def table_clients_write(self,place):
         self.client_data = (
             ('Cliente',self.client),
             ('Nome Fantasia',self.client_name_f),
@@ -81,13 +85,15 @@ class File(File_Functions):
             ('Ramo da Atividade',self.client_activity)
         )
 
-        table = self.document.add_table(rows=1,cols=2)
+        table = self.document.add_table(1,2)
 
         for data,info in self.client_data:
             row = table.add_row().cells
             row[0].text = str(data)
             row[1].text = info
         print('Tabela de clientes criada')
+        print(type(table))
+        
 
 #Creating a main application functions
 class Application_Functions():
@@ -100,6 +106,20 @@ class Application_Functions():
     def gets_entry_values(self):
         self.pdf.name= self.document_name_entry.get()
         self.pdf.client = self.document_client_entry.get()
+        self.pdf.client = self.client_name_entry.get()
+        self.pdf.client_name_f = self.client_name_f_entry.get()
+        self.pdf.client_cnpj = self.client_cnpj_entry.get()
+        self.pdf.client_num = self.client_num_entry.get()
+        self.pdf.modalidade_tarifa = self.client_mod_entry.get()
+        self.pdf.client_classe = self.client_class_entry.get()
+        self.pdf.client_address = self.client_address_entry.get()
+        self.pdf.client_city = self.client_city_entry.get()
+        self.pdf.client_state = self.client_state_entry.get()
+        self.pdf.client_phone = self.client_phone_entry.get()
+        self.pdf.client_mail = self.client_mail_entry.get()
+        self.pdf.client_contact = self.client_contact_entry.get()
+        self.pdf.client_activity = self.client_activity_entry.get()
+
         print(self.pdf.name)
         print(self.pdf.client)
 
@@ -127,31 +147,12 @@ class Application(Application_Functions):
         #self.root.minsize(width=,height=)
     #set first frame definitions
     def frame_logo(self):
-        self.fr_logo=Frame(
-            self.root,
-            bd=4,
-        )
-        self.fr_logo.place(
-            relx=0.3,
-            rely=0.01,
-            relwidth=0.4,
-            relheight=0.2
-        )
+        self.fr_logo=Frame(self.root,bd=4,)
+        self.fr_logo.place(relx=0.3,rely=0.01,relwidth=0.4,relheight=0.2)
     #setting main frame definitions
     def main_frame(self):
-        self.main_fr=Frame(
-            self.root,
-            # bg='white',
-            bd=4,
-            highlightbackground='black',
-            highlightthickness=0.5
-        )
-        self.main_fr.place(
-            relx=0.01,
-            rely=0.2,
-            relwidth=0.98,
-            relheight=0.725
-        )
+        self.main_fr=Frame(self.root,bd=4,highlightbackground='black',highlightthickness=0.5)
+        self.main_fr.place(relx=0.01,rely=0.2,relwidth=0.98,relheight=0.725)
     #setting notebook in main frame
     def pages(self):
         self.notebook = ttk.Notebook(self.main_fr)
@@ -164,12 +165,7 @@ class Application(Application_Functions):
         self.notebook.add(self.page1,text='Document Settings')
         self.notebook.add(self.page2, text='Client Information')
 
-        self.notebook.place(
-            relx=0,
-            rely=0,
-            relwidth=1,
-            relheight=1
-        )
+        self.notebook.place(relx=0,rely=0,relwidth=1,relheight=1)
     #setting logo
     def labels_frame_logo(self):
         self.ecosol_img = PhotoImage(data=base64.b64decode(self.ecosol_logo))
@@ -177,12 +173,7 @@ class Application(Application_Functions):
         # self.ecosol_img_aux = PhotoImage(self.ecosol_img)
         self.ecosol_img.subsample(2,2)
         self.ecosol_label_img = Label(self.fr_logo, image=self.ecosol_img)
-        self.ecosol_label_img.place(
-            relx=0.0,
-            rely=0.0,
-            relheight=1,
-            relwidth=1
-        )
+        self.ecosol_label_img.place(relx=0.0,rely=0.0,relheight=1,relwidth=1)
     def widgets_page1(self):
         #creating page1 labels
         self.document_name_label = Label(self.page1,text="Document Name:",bg = 'lightgray',)
@@ -197,107 +188,92 @@ class Application(Application_Functions):
         self.document_name_entry.place(relx=0.01,rely=0.071,relwidth=0.15,relheight=0.06)
         
         self.document_client_entry = Entry(self.page1)
-        self.document_client_entry.place(
-            relx=0.01,
-            rely=0.181,
-            relwidth=0.15,
-            relheight=0.06
-        )
+        self.document_client_entry.place(relx=0.01,rely=0.181,relwidth=0.15,relheight=0.06)
+
     def widgets_page2(self):
-        self.client_name_label = Label(
-            self.page2,
-            text='Nome do Cliente',
-            bg='lightgray'
-        )
-        self.client_name_label.place(
-            relx=0,
-            rely=0,
-            relwidth=0.15,
-            relheight=1
-        )
-        self.client_name_f_label = Label(
-            self.page2,
-            text='Nome Fantasia',
-            bg='lightgray'
-        )
-        self.client_cnpj_label = Label(
-            self.page2,
-            text='CNPJ',
-            bg='lightgray'
-        )
-        self.client_num_label = Label(
-            self.page2,
-            text='N°s do Cliente',
-            bg='lightgray'
-        )
-        self.client_mod_label = Label(
-            self.page2,
-            text='Modalidade Tarifária',
-            bg='lightgray'
-        )
-        self.client_class_label = Label(
-            self.page2,
-            text='Classe/Subclasse',
-            bg='lightgray'
-        )
-        self.client_address_label = Label(
-            self.page2,
-            text='Endedreço',
-            bg='lightgray'
-        )
-        self.client_city_label = Label(
-            self.page2,
-            text='Cidade',
-            bg='lightgray'
-        )
-        self.client_state_label = Label(
-            self.page2,
-            text='Estado',
-            bg='lightgray'
-        )
-        self.client_phone_label = Label(
-            self.page2,
-            text='Telefone',
-            bg='lightgray'
-        )
-        self.client_mail_label = Label(
-            self.page2,
-            text='E-mail',
-            bg='lightgray'
-        )
-        self.client_contact_label = Label(
-            self.page2,
-            text='Contato',
-            bg='lightgray'
-        )
-        self.client_activity_label = Label(
-            self.page2,
-            text='Ramo de Atividade',
-            bg='lightgray'
-        )
+        self.client_name_label = Label(self.page2,text='Nome do Cliente',bg='lightgray')
+        self.client_name_label.place(relx=0.01,rely=0.0,relwidth=0.10,relheight=0.1)
+
+        self.client_name_entry = Entry(self.page2)
+        self.client_name_entry.place(relx=0.01,rely=0.08,relwidth=0.15,relheight=0.06)
+
+        self.client_name_f_label = Label(self.page2,text='Nome Fantasia',bg='lightgray')
+        self.client_name_f_label.place(relx=0.23,rely=0.0,relwidth=0.15,relheight=0.1)
+
+        self.client_name_f_entry = Entry(self.page2)
+        self.client_name_f_entry.place(relx=0.25,rely=0.08,relwidth=0.15,relheight=0.06)
+        
+        self.client_cnpj_label = Label(self.page2,text='CNPJ',bg='lightgray')
+        self.client_cnpj_label.place(relx=0.45,rely=0.0,relwidth=0.1,relheight=0.1)
+
+        self.client_cnpj_entry = Entry(self.page2)
+        self.client_cnpj_entry.place(relx=0.48,rely=0.08,relwidth=0.15,relheight=0.06)
+        
+        self.client_num_label = Label(self.page2,text='N°s do Cliente',bg='lightgray')
+        self.client_num_label.place(relx=0.7,rely=0.0,relwidth=0.15,relheight=0.1)
+
+        self.client_num_entry = Entry(self.page2)
+        self.client_num_entry.place(relx=0.73,rely=0.08,relwidth=0.15,relheight=0.06)
+
+        self.client_mod_label = Label(self.page2,text='Modalidade Tarifária',bg='lightgray')
+        self.client_mod_label.place(relx=0.015,rely=0.15,relwidth=0.115,relheight=0.1)
+
+        self.client_mod_entry = Entry(self.page2)
+        self.client_mod_entry.place(relx=0.01,rely=0.23,relwidth=0.15,relheight=0.06)
+        
+        self.client_class_label = Label(self.page2,text='Classe/Subclasse',bg='lightgray')
+        self.client_class_label.place(relx=0.25,rely=0.15,relwidth=0.11,relheight=0.1)
+
+        self.client_class_entry = Entry(self.page2)
+        self.client_class_entry.place(relx=0.25,rely=0.23,relwidth=0.15,relheight=0.06)
+
+        self.client_address_label = Label(self.page2,text='Endedreço',bg='lightgray')
+        self.client_address_label.place(relx=0.463,rely=0.15,relwidth=0.11,relheight=0.1)
+
+        self.client_address_entry = Entry(self.page2)
+        self.client_address_entry.place(relx=0.48,rely=0.23,relwidth=0.15,relheight=0.06)
+
+        self.client_city_label = Label(self.page2,text='Cidade',bg='lightgray')
+        self.client_city_label.place(relx=0.705,rely=0.15,relwidth=0.11,relheight=0.1)
+
+        self.client_city_entry = Entry(self.page2)
+        self.client_city_entry.place(relx=0.73,rely=0.23,relwidth=0.15,relheight=0.06)
+
+        self.client_state_label = Label(self.page2,text='Estado',bg='lightgray')
+        self.client_state_label.place(relx=0,rely=0.3,relwidth=0.08,relheight=0.1)
+
+        self.client_state_entry = Entry(self.page2)
+        self.client_state_entry.place(relx=0.015,rely=0.38,relwidth=0.15,relheight=0.06)
+
+        self.client_phone_label = Label(self.page2,text='Telefone',bg='lightgray')
+        self.client_phone_label.place(relx=0.22,rely=0.3,relwidth=0.12,relheight=0.1)
+
+        self.client_phone_entry = Entry(self.page2)
+        self.client_phone_entry.place(relx=0.25,rely=0.38,relwidth=0.15,relheight=0.06)
+
+        self.client_mail_label = Label(self.page2,text='E-mail',bg='lightgray')
+        self.client_mail_label.place(relx=0.47,rely=0.3,relwidth=0.08,relheight=0.1)
+
+        self.client_mail_entry = Entry(self.page2)
+        self.client_mail_entry.place(relx=0.48,rely=0.38,relwidth=0.15,relheight=0.06)
+
+        self.client_contact_label = Label(self.page2,text='Contato',bg='lightgray')
+        self.client_contact_label.place(relx=0.72,rely=0.3,relwidth=0.08,relheight=0.1)
+
+        self.client_contact_entry = Entry(self.page2)
+        self.client_contact_entry.place(relx=0.73,rely=0.38,relwidth=0.15,relheight=0.06)
+
+        self.client_activity_label = Label(self.page2,text='Ramo de Atividade',bg='lightgray')
+        self.client_activity_label.place(relx=0.01,rely=0.475,relwidth=0.13,relheight=0.1)
+
+        self.client_activity_entry = Entry(self.page2)
+        self.client_activity_entry.place(relx=0.015,rely=0.57,relwidth=0.15,relheight=0.06)
         
     def window_buttons(self):
-        self.generate_pdf_button = Button(
-            self.root,
-            text = "Gerar PDF",
-            command = self.file_generate
-        )
-        self.generate_pdf_button.place(
-            relx=0.45,
-            rely=0.94,
-            relwidth=0.1,
-            relheight=0.04
-        )
-        self.quit_application_button = Button(
-            self.root,
-            text='Quit',
-            command = self.root.destroy
-        )
-        self.quit_application_button.place(
-            relx=0.85,
-            rely=0.94,
-            relwidth=0.1,
-            relheight=0.04
-        ) 
+        self.generate_pdf_button = Button(self.root,text = "Gerar PDF",command = self.file_generate)
+        self.generate_pdf_button.place(relx=0.45,rely=0.94,relwidth=0.1,relheight=0.04)
+
+        self.quit_application_button = Button(self.root,text='Quit',command = self.root.destroy)
+        self.quit_application_button.place(relx=0.85,rely=0.94,relwidth=0.1,relheight=0.04) 
 
 Application()
