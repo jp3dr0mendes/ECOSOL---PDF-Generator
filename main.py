@@ -5,6 +5,7 @@ import base64
 from PIL import ImageTk, Image
 from docx import Document
 from docx.shared import Cm,Pt
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx2pdf import convert
 import aspose.words as aw
 from reportlab.pdfgen import canvas
@@ -21,7 +22,7 @@ class File_Functions():
 #Creating a class for documents notations
 class File(File_Functions):
     def __init__(self):
-        self.document = Document('Modelo de Diagnóstico_CTT.docx')
+        self.document = Document()
         self.cnv = None
         self.pages=[]
         self.contents=[]

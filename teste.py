@@ -4,7 +4,8 @@ import webbrowser
 import base64
 from PIL import ImageTk, Image
 from docx import Document
-from docx.shared import Cm,Pt
+from docx.shared import Cm,Pt,Inches
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx2pdf import convert
 import aspose.words as aw
 from reportlab.pdfgen import canvas
@@ -17,29 +18,51 @@ import PyPDF2 as ppdf
 class File_Functions():
     def mm2p(mm: int):
         return mm/0.352777
+    
+    def base64_images_decode(self):
+        print('qlq coisa')
+
+    def document_set_margins(self,document):
+        sections = document.sections
+
+        for section in sections:
+            section.top_margin = Cm(3)
+            section.right_margin = Cm(2)
+            section.bottom_margin = Cm(2)
+            section.left_margin = Cm(3)
 
 #Creating a class for documents notations
 class File(File_Functions):
     def __init__(self):
-        self.document = Document('Modelo de Diagnóstico_CTT.docx')
+        self.document = Document()
         self.cnv = None
-        self.pages=[]
-        self.contents=[]
+        self.style = self.document.styles['Normal']
+        self.font = self.style.font
+        self.font.name = 'Arial'
+        # self.pages=[]
+        # self.contents=[]
         # self.client=''
-        self.name=''
-        self.table_clients=''
+        # self.name=''
+        # self.table_clients=''
+        self.pg_one()  # webbrowser.open('teste1.pdf')
+    
+    def pg_one(self):
+        for i in range(100):
+            self.document.add_paragraph('teste')
+        paragraph = self.document.add_paragraph('Teste1')
+        paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
     def create_file(self):
-        # print(self.document)
-        for paragraph in self.document.paragraphs:
-            # print('paragraph:')
-            # print(paragraph)
-            if '[Cliente]' in paragraph.text:
-                paragraph.text =  paragraph.text.replace('[Cliente]',self.client)
-            if '[Tabela Cliente]' in paragraph.text:
-                print('espaço de tabela achado')
-                self.table_clients_write(paragraph)
-                # self.document.add_table(rows=1,cols=2)
+        # # print(self.document)
+        # for paragraph in self.document.paragraphs:
+        #     # print('paragraph:')
+        #     # print(paragraph)
+        #     if '[Cliente]' in paragraph.text:
+        #         paragraph.text =  paragraph.text.replace('[Cliente]',self.client)
+        #     if '[Tabela Cliente]' in paragraph.text:
+        #         print('espaço de tabela achado')
+        #         self.table_clients_write(paragraph)
+        #         # self.document.add_table(rows=1,cols=2)
 
         print(self.name)
         print(self.client)
