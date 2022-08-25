@@ -74,6 +74,23 @@ class Relatorio(File):
             'Trocas':None,
             'Demanda na Ponta':None,
             'RCB':None,
+            'Lat Local': None,
+            'Long Local': None,
+        }
+        self.project_client = {
+            'Nome Cliente': None,
+            'Nome Fantasia': None,
+            'CNPJ': None,
+            'Num Cliente': None,
+            'Modalidade da Tarifa': None,
+            'Classe/Subclasse': None,
+            'Endereco': None,
+            'Cidade': None,
+            'Estado': None,
+            'Telefone': None,
+            'E-mail': None,
+            'Contato': None,
+            'Ramo de Atividade': None, 
         }
         self.document_images = {
             'Logo': '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',
@@ -85,17 +102,37 @@ class Relatorio(File):
 
     def set_paragraphs(self, paragraph:str):
         self.document_paragraphs = {
-            'Resumo Executivo': f'''\n \t O objetivo deste projeto é promover a eficientização da iluminação {self.project_atributes['Usos Finais']} do {self.project_atributes['Cliente']} e implementar um sistema de geração de energia fotovoltaica nas instalações da unidade.
-\tÉ prevista a substituição das lâmpadas fluorescentes tubulares e fluorescentes compactas por modelos mais eficientes de LED {self.project_atributes['Trocas']}. Pretende-se também realizar a instalação de um sistema de geração solar fotovoltaica conectada à rede. Essas medidas reduzirão consideravelmente o consumo de energia elétrica, e impactarão positivamente em todos os meios envolvidos, tanto na redução dos custos para o beneficiário, como na redução da demanda no horário de ponta para concessionária.
-\tA fim de maximizar o impacto social e a redução no consumo de energia elétrica, está previsto a organização de palestras, workshops, distribuição de material informativo (folders/cartilhas) e treinamentos, garantindo uma eficaz ação educativa, de forma a dar ciência das ações adotadas pela Concessionária, da importância do projeto de eficiência, e dos benefícios trazidos pelo consumo consciente.
-\tPara a metodologia de Medição e Verificação, serão utilizados os procedimentos do Protocolo Internacional de Medição e Verificação do Desempenho Energético conforme os procedimentos do Programa de Eficiência Energética – PROPEE e seu guia de M&V.
-\tOs resultados esperados com o projeto são {self.project_atributes['Energia Economizada']} MWh/ano de energia economizada, {self.project_atributes['Demanda na Ponta']}kW de demanda na ponta e uma relação custo-benefício (RCB) de {self.project_atributes['RCB']}'''
+            'Resumo Executivo':f'''
+                \n \t O objetivo deste projeto é promover a eficientização da iluminação {self.project_atributes['Usos Finais']} do {self.project_atributes['Cliente']} e implementar um sistema de geração de energia fotovoltaica nas instalações da unidade.
+                \tÉ prevista a substituição das lâmpadas fluorescentes tubulares e fluorescentes compactas por modelos mais eficientes de LED {self.project_atributes['Trocas']}. Pretende-se também realizar a instalação de um sistema de geração solar fotovoltaica conectada à rede. Essas medidas reduzirão consideravelmente o consumo de energia elétrica, e impactarão positivamente em todos os meios envolvidos, tanto na redução dos custos para o beneficiário, como na redução da demanda no horário de ponta para concessionária.
+                \tA fim de maximizar o impacto social e a redução no consumo de energia elétrica, está previsto a organização de palestras, workshops, distribuição de material informativo (folders/cartilhas) e treinamentos, garantindo uma eficaz ação educativa, de forma a dar ciência das ações adotadas pela Concessionária, da importância do projeto de eficiência, e dos benefícios trazidos pelo consumo consciente.
+                \tPara a metodologia de Medição e Verificação, serão utilizados os procedimentos do Protocolo Internacional de Medição e Verificação do Desempenho Energético conforme os procedimentos do Programa de Eficiência Energética – PROPEE e seu guia de M&V.
+                \tOs resultados esperados com o projeto são {self.project_atributes['Energia Economizada']} MWh/ano de energia economizada, {self.project_atributes['Demanda na Ponta']}kW de demanda na ponta e uma relação custo-benefício (RCB) de {self.project_atributes['RCB']}''',
+        
+        'Apresentação do Cliente':'',
+        'Apresentação da Empresa': '''
+            \tA Ecosol é uma empresa concebida no início da década de 90, idealizada com o objetivo de propagar a cultura de eficiência energética e energia solar. Localizada em Niterói – Rio de Janeiro, a Ecosol vem desde 1993 oferecendo soluções em aquecimento solar, instalações hidráulicas, elétricas e Fotovoltaicas. Nascida na Região Oceânica como fabricante de Coletores, a Ecosol especializou-se em projetos e instalações, participando de grandes obras como o maracanã, as arenas olímpicas, indústrias, hospitais, escolas, academias, prédios residenciais e comerciais, além das diversas participações no Programa de Eficiência Energética da ANEEL, com projetos aprovados em todas as macrorregiões do Brasil.
+            \tPara o sucesso de seus serviços, a Ecosol conta com um corpo profissional que disponibiliza as seguintes estruturas:
+
+            - Equipe de projetos;
+            - Equipe Técnica;
+            - Equipe de suporte volante;
+            - Equipe de retaguarda para suporte permanente;
+            - Manutenção e reparo de equipamentos;
+
+            \tAtualmente, presente em 18 estados do país e com mais de 600 sistemas de energia solar fotovoltaica em operação, a ECOSOL contribui na construção de um futuro mais sustentável para o planeta. Em seu período de atuação, pode-se comprovar experiência e credibilidade junto aos grupos de concessionárias de energia ENEL, Energisa, Equatorial e Neoenergia.''',
+        'Vistoria na UC': f'''
+            \tCom o objetivo de identificar as necessidades e a possibilidade de eficientização da UC, foi realizada, pelo engenheiro eletricista subcontratado Lucas Araújo Pereira, uma vistoria técnica e o levantamento de dados mostrado na tabela na seção “5.2. Levantamento”. Como pode ser observado, a proposta de eficientização contempla a substituição das lâmpadas de tecnologia antiga por novas lâmpadas mais eficientes.
+            \tCom as coordenadas geográficas, foi possível verificar o potencial de instalação do sistema Fotovoltaico. As coordenadas encontradas de -4.9654 W, -42.7958 S , foram então inseridas no banco de dados do CRESESB, que resultou no gráfico abaixo. Os resultados obtidos foram posteriormente avaliados para dimensionamento. Foi considerado o sistema fotovoltaico, pois além da representativa economia de energia, os outros usos fins demonstram-se suficientemente eficientes. Segue, levantamento fotográfico das áreas comuns do colégio, no Anexo A.
+            \tA vistoria foi realizada em conjunto com os membros da equipe de manutenção do cliente, que visitaram os setores da edificação, com o objetivo de verificar os horários de funcionamentos das áreas, assim como os tipos de lâmpadas e reatores presentes. Com os dados da vistoria em mãos, foi possível então realizar o diagnóstico energético levando em consideração os cálculos preliminares do consumo Energético Anual, Demanda Retirada na Ponta e RCB para a dada proposta''',
+        
         }
         return self.document_paragraphs[paragraph]
 
     def create_file(self):
         self.first_page()
         self.resumo_executivo()
+        self.dados()
 
         print(self.name)
         # print(self.client)
@@ -135,32 +172,41 @@ class Relatorio(File):
         print(self.set_paragraphs('Resumo Executivo'))
         paragraph = self.document.add_paragraph(self.set_paragraphs('Resumo Executivo'))
         paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-
-    # def resumo_executivo(self):
-
+    
+    def dados(self):
+        self.document.add_heading('2. Dados',1)
+        self.document.add_heading('2.1. Empresa Executora',2)
+        #gerar tabela da empresa
+        self.document.add_heading('2.2. Cliente Beneficiado',2)
+        self.table_clients_write()
     #Function to make a client data table
     def table_clients_write(self):
         self.client_data = (
-            ('Cliente',self.client),
-            ('Nome Fantasia',self.client_name_f),
-            ('CNPJ',self.client_cnpj),
-            ('N°s do Cliente',self.client_num),
-            ('Modalidade da Tarifa',self.modalidade_tarifa),
-            ('Classe/Subclasse',self.client_classe),
-            ('Endereço',self.client_address),
-            ('Cidade',self.client_city),
-            ('Estado',self.client_state),
-            ('Telefone',self.client_phone),
-            ('E-mail',self.client_mail),
-            ('Contato',self.client_contact),
-            ('Ramo da Atividade',self.client_activity)
+            ('Cliente',self.project_client['Nome Cliente']),
+            ('Nome Fantasia',self.project_client['Nome Fantasia']),
+            ('CNPJ',self.project_client['CNPJ']),
+            ('N°s do Cliente',self.project_client['Num Cliente']),
+            ('Modalidade da Tarifa',self.project_client['Modalidade da Tarifa']),
+            ('Classe/Subclasse',self.project_client['Classe/Subclasse']),
+            ('Endereço',self.project_client['Endereco']),
+            ('Cidade',self.project_client['Cidade']),
+            ('Estado',self.project_client['Estado']),
+            ('Telefone',self.project_client['Telefone']),
+            ('E-mail',self.project_client['E-mail']),
+            ('Contato',self.project_client['Contato']),
+            ('Ramo da Atividade',self.project_client['Ramo de Atividade'])
         )
+
+        print(self.client_data)
 
         table = self.document.add_table(1,2)
 
         for data,info in self.client_data:
+
+            print(data)
+            print(info)
             row = table.add_row().cells
-            row[0].text = str(data)
+            row[0].text = data
             row[1].text = info
         print('Tabela de clientes criada')
         print(type(table))
@@ -187,18 +233,19 @@ class Application_Functions():
         self.pdf.name= self.document_name_entry.get()
         # self.pdf.client = self.document_client_entry.get()
         self.pdf.project_atributes['Cliente'] = self.client_name_entry.get()
-        self.pdf.client_name_f = self.client_name_f_entry.get()
-        self.pdf.client_cnpj = self.client_cnpj_entry.get()
-        self.pdf.client_num = self.client_num_entry.get()
-        self.pdf.modalidade_tarifa = self.client_mod_entry.get()
-        self.pdf.client_classe = self.client_class_entry.get()
-        self.pdf.client_address = self.client_address_entry.get()
-        self.pdf.client_city = self.client_city_entry.get()
-        self.pdf.client_state = self.client_state_entry.get()
-        self.pdf.client_phone = self.client_phone_entry.get()
-        self.pdf.client_mail = self.client_mail_entry.get()
-        self.pdf.client_contact = self.client_contact_entry.get()
-        self.pdf.client_activity = self.client_activity_entry.get()
+        self.pdf.project_client['Nome Cliente'] = self.client_name_entry.get()
+        self.pdf.project_client['Nome Fantasia'] = self.client_name_f_entry.get()
+        self.pdf.project_client['CNPJ'] = self.client_cnpj_entry.get()
+        self.pdf.project_client['Num Cliente'] = self.client_num_entry.get()
+        self.pdf.project_client['Modalidade da Tarifa'] = self.client_mod_entry.get()
+        self.pdf.project_client['Classe/Subclasse'] = self.client_class_entry.get()
+        self.pdf.project_client['Endereco'] = self.client_address_entry.get()
+        self.pdf.project_client['Cidade'] = self.client_city_entry.get()
+        self.pdf.project_client['Estado'] = self.client_state_entry.get()
+        self.pdf.project_client['Telefone'] = self.client_phone_entry.get()
+        self.pdf.project_client['E-mail'] = self.client_mail_entry.get()
+        self.pdf.project_client['Contato'] = self.client_contact_entry.get()
+        self.pdf.project_client['Ramo de Atividade'] = self.client_activity_entry.get()
         self.pdf.project_atributes['Usos Finais'] = self.final_use_entry.get()
         self.pdf.project_atributes['Energia Economizada'] = self.energy_economy_entry.get()
         self.pdf.project_atributes['Demanda na Ponta'] = self.demanda_entry.get()
