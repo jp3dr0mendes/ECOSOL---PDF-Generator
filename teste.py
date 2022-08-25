@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import Text
-from turtle import back
 import webbrowser
 import base64
 from PIL import ImageTk, Image
@@ -9,10 +8,8 @@ from docx import Document
 from docx.shared import Cm,Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx2pdf import convert
-import aspose.words as aw
 import os
 import io
-import PyPDF2 as ppdf
 from datetime import date
 
 #class File_Functions(File):
@@ -127,12 +124,14 @@ class Relatorio(File):
             \tA vistoria foi realizada em conjunto com os membros da equipe de manutenção do cliente, que visitaram os setores da edificação, com o objetivo de verificar os horários de funcionamentos das áreas, assim como os tipos de lâmpadas e reatores presentes. Com os dados da vistoria em mãos, foi possível então realizar o diagnóstico energético levando em consideração os cálculos preliminares do consumo Energético Anual, Demanda Retirada na Ponta e RCB para a dada proposta''',
         
         }
+        
         return self.document_paragraphs[paragraph]
 
     def create_file(self):
         self.first_page()
         self.resumo_executivo()
         self.dados()
+        self.apresentação_empresa()
 
         print(self.name)
         # print(self.client)
@@ -176,11 +175,34 @@ class Relatorio(File):
     def dados(self):
         self.document.add_heading('2. Dados',1)
         self.document.add_heading('2.1. Empresa Executora',2)
-        #gerar tabela da empresa
+        cliente = self.project_atributes['Cliente']
+        self.ecosol_table = (
+            ('Título do Projeto', f'Projeto de Eficientização do {cliente}'),
+            ('Empresa', 'Ecosol Geração'),
+            ('Razão Social','ECOSOL ENERGIA SOLAR E TECNOLOGIA LTDA.'),
+            ('Endereço','Av. Irene Lopes Sodré Nº 477, Itaipu, Niterói – Rio de Janeiro'),
+            ('Responsável Técnico', 'Alexandre Goulart Galvão'),
+            ('Título do Responsável','Engenheiro Mecânico'),
+            ('CREA','88102835-6'),
+            ('Telefone','(21) 2609-5007 / (21) 97041-7997'),
+            ('E-mail','engenharia@ecosolenergiasolar.com.br'),
+            ('Site','www.ecosolgeracao.com.br')
+        )
+
+        table = self.document.add_table(0,2,'Table Grid')
+
+        for data,info in self.ecosol_table:
+            row = table.add_row().cells
+            row[0].text = data
+            row[1].text = info
+
         self.document.add_heading('2.2. Cliente Beneficiado',2)
-        self.table_clients_write()
+        self.table_clients()
+    def apresentação_empresa(self):
+        self.document.add_heading('4. Apresentação da Empresa Executora',1)
+        self.document.add_paragraph(self.set_paragraphs('Apresentação da Empresa'))
     #Function to make a client data table
-    def table_clients_write(self):
+    def table_clients(self):
         self.client_data = (
             ('Cliente',self.project_client['Nome Cliente']),
             ('Nome Fantasia',self.project_client['Nome Fantasia']),
@@ -197,20 +219,14 @@ class Relatorio(File):
             ('Ramo da Atividade',self.project_client['Ramo de Atividade'])
         )
 
-        print(self.client_data)
-
-        table = self.document.add_table(1,2)
+        table = self.document.add_table(0,2,'Table Grid')
 
         for data,info in self.client_data:
-
-            print(data)
-            print(info)
             row = table.add_row().cells
             row[0].text = data
             row[1].text = info
         print('Tabela de clientes criada')
         print(type(table))
-        
 
 #Creating a main application functions
 class Application_Functions():
