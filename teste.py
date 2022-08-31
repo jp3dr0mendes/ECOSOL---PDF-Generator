@@ -154,23 +154,45 @@ class Relatorio(File):
             '\tObedecendo as normas técnicas VR01.01-00.12– Norma de Conexão de Microgeradores ao Sistema de Distribuição em baixa tensão, será instalado uma placa de sinalização (250mm x 180mm) no padrão de entrada de energia, informando que a unidade consumidora possui geração própria conforme modelo abaixo:',
             '\tA vida útil dos equipamentos fotovoltaicos está representada na tabela a seguir, de acordo com o edital, Anexo C – Tabela de Materiais e Equipamentos:',
         ],
+        'Simulação de Energia':
+        [
+            '\tO arquivo do software PVsyst com a simulação de geração de energia encontra-se no anexo D, ao final do projeto.',
+            '\tO laudo estrutural, que atesta a viabilidade de instalação do sistema fotovoltaico na unidade consumidora, é apresentado no Anexo E, ao final deste documento.\n\tO telhado conta com estrutura metálica, e está prevista a instalação de 62 módulos de energia solar com dimensões de (2285x1134x35) mm, pesando 31,60 kg cada um que, em conjunto com suas estruturas auxiliares, gerará um carregamento adicional em torno de 14 kgf/m². A carga estática do vento é de 70kgf/m² e o peso das telhas é de 20kgf/m², gerando um carregamento total de 1,04kN/m. Nesta análise foi considerada a distância entre dois pontos de apoio dos trilhos de 1,5 m.\n\tÁrea total da instalação: 150 m² \n\tPeso total na estrutura: 2.100\n\tAs demais informações, bem como considerações e Conclusão do Laudo, encontram-se no Anexo E deste relatório.\n\tO profissional responsável pelo Laudo estrutural é o Engenheiro Civil Lucas Araújo Pereira, CREA RJ: 2017113375.'
+        ],
+        'Gerenciamento da Obra':'\tPara este projeto, as funções de supervisão ficarão a cargo do engenheiro Alexandre Goulart Galvão, que possui experiência em projetos de eficiência energética junto a concessionárias e também possui larga experiência com dimensionamento, instalação e comissionamento de sistemas fotovoltaicos.',
+        'Analise do Consumo de Energia':
+        [
+            '\tO gráfico a seguir expressa, aproximadamente, a participação mensal do uso fim de energia da unidade. Como pode ser observado, a iluminação representa aproximadamente 73% do consumo total dos estabelecimentos.',
+            '\tO tempo de funcionamento das atividades é de no máximo 9h/dia em ambientes internos e 12 h/dia em ambientes externos, que abrange tanto os horários de ponta, como Fora Ponta. A iluminação externa funciona apenas pelo período da noite abrangendo 3h da ponta.\n\tA média de consumo total, considerando a unidade consumidora, é de 113.063,62 kWh de energia mensal. No gráfico abaixo é possível observar o padrão aproximado de consumo mensal do estabelecimento ao longo do ano.\n\tAssim, a proposta de retrofit das lâmpadas exercerá impacto na redução do consumo tanto no horário de ponta, como no horário fora de ponta. Já a instalação do gerador solar Fotovoltaico impactará no consumo apenas no horário fora de ponta.'
+        ],
         }
         
         return self.document_paragraphs[paragraph]
 
     def create_file(self):
-        self.first_page()
-        self.resumo_executivo()
-        self.dados()
-        self.client_description()
-        self.apresentação_empresa()
-        self.descricao_detalhamento_projeto()
+        self.set_file()
 
         self.document.save(self.name+'.docx')
         convert(self.name+'.docx',self.name+'.pdf')
         os.remove(self.name+'.docx')
         
-        webbrowser.open(self.name+'.pdf')        
+        webbrowser.open(self.name+'.pdf')
+
+    def set_file(self):
+        self.first_page()
+        self.resumo_executivo()
+        self.dados()
+        self.client_description()
+        self.apresentação_empresa()       
+        self.vistoria_uc()
+        self.levantamento()
+        self.desc_sist_atual()
+        self.desc_sist()
+        self.cronograma_imp()
+        self.especific_mat_equip()
+        self.simulacao_geracao_energia()
+        self.gerenciamento_obra()
+        self.analise_consumo_energia()
 
     def first_page(self):
         self.document.add_picture(self.base64_images_decode(self.document_images['Logo']))
@@ -270,6 +292,9 @@ class Relatorio(File):
         self.desc_sist()
         self.cronograma_imp()
         self.especific_mat_equip()
+        self.simulacao_geracao_energia()
+        self.gerenciamento_obra()
+        self.analise_consumo_energia()
 
     def vistoria_uc(self):
         self.document.add_heading('5. Descrição e detalhamento do projeto',1)
@@ -385,6 +410,25 @@ class Relatorio(File):
 
         self.document.add_paragraph(text[15])
 
+    def simulacao_geracao_energia(self):
+        self.document.add_heading('6. Simulação de geração de energia',1)
+        text = self.set_paragraphs('Simulação de Energia')
+        self.document.add_paragraph(text[0])
+        
+        self.document.add_heading('6.1. Laudo estrutural',2)
+        self.document.add_paragraph(text[1])
+
+    def gerenciamento_obra(self):
+        self.document.add_heading('7. Gerenciamento da Obra',1)
+        self.document.add_paragraph(self.set_paragraphs('Gerenciamento da Obra'))
+
+    def analise_consumo_energia(self):
+        text = self.set_paragraphs('Analise do Consumo de Energia')
+        self.document.add_heading('8. Aálise do Consumo de Energia',1)
+        self.document.add_heading('8.1. Estimativa da Participação dos Usos Finais da Energia Elétrica')
+        self.document.add_paragraph(text[0])
+        self.document.add_heading('8.2. Avaliação do Histórico de Consumo',1)
+        self.document.add_paragraph(text[1])
 
 #Creating a main application functions
 class Application_Functions():
