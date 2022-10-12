@@ -1,6 +1,9 @@
+from email import message
 from tkinter import *
 from tkinter import ttk
 from tkinter import Text
+from tkinter import filedialog as fd
+from turtle import title
 import webbrowser
 import base64
 from PIL import ImageTk, Image
@@ -847,6 +850,21 @@ class Application_Functions():
         print(self.pdf.name)
         print(self.pdf.project_atributes['Cliente'])
 
+    def take_pictures(self, msg: str):
+        file_types = [
+            ['image files','*.jpg'],
+            ['image files','*.png'],
+            ['image files','*.jpeg'],
+            ['All files','*.*']
+        ]
+
+        file_name = fd.askopenfilename(
+            title = msg,
+            initialdir='/',
+            filetypes=file_types
+        )
+ 
+
 #building the application
 class Application(Application_Functions):
     def __init__(self):
@@ -884,14 +902,17 @@ class Application(Application_Functions):
         self.page1 = Frame(self.notebook)
         self.page2 = Frame(self.notebook)
         self.page3 = Frame(self.notebook)
+        self.page4 = Frame(self.notebook)
 
         self.page1.configure(background='lightgray')
         self.page2.configure(background='lightgray')
-        self.page3.configure(background = 'lightgray')
+        self.page3.configure(background='lightgray')
+        self.page4.configure(background='lightgray')
 
         self.notebook.add(self.page1,text='Document Settings')
         self.notebook.add(self.page2, text='Client Information')
-        self.notebook.add(self.page3, text = 'Resumo do Projeto')
+        self.notebook.add(self.page3, text='Resumo do Projeto')
+        self.notebook.add(self.page4,text='Imagens do Projeto')
 
         self.notebook.place(relx=0,rely=0,relwidth=1,relheight=1)
     #setting logo
@@ -900,6 +921,7 @@ class Application(Application_Functions):
         self.ecosol_img.subsample(2,2)
         self.ecosol_label_img = Label(self.fr_logo, image=self.ecosol_img)
         self.ecosol_label_img.place(relx=0.0,rely=0.0,relheight=1,relwidth=1)
+
     def widgets_page1(self):
         #creating page1 labels
         self.document_name_label = Label(self.page1,text="Document Name:",bg = 'lightgray',)
@@ -995,6 +1017,9 @@ class Application(Application_Functions):
         self.client_activity_entry = Entry(self.page2)
         self.client_activity_entry.place(relx=0.015,rely=0.57,relwidth=0.15,relheight=0.06)
 
+        self.client_pic_btn = Button(self.page2, text='Foto do Cliente', command=self.take_pictures)
+
+        #funtions to take picture files
     def widgets_page3(self):
         self.final_use_label = Label(self.page3,text='Usos Finais do Projeto:', bg='lightgray')
         self.final_use_label.place(relx=0.01,rely=0.0,relwidth=0.125,relheight=0.1)
