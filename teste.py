@@ -77,6 +77,9 @@ class Relatorio(File):
             'Lat Local': None,
             'Long Local': None,
             'Numero de Lampadas': None,
+            'Engenheiro Contratado': None,
+            'Coordenada W': None,
+            'Coodenada S': None
         }
         self.project_client = {
             'Nome Cliente': None,
@@ -125,7 +128,7 @@ class Relatorio(File):
         'Apresentação da Empresa': '''
             A Ecosol é uma empresa concebida no início da década de 90, idealizada com o objetivo de propagar a cultura de eficiência energética e energia solar. Localizada em Niterói – Rio de Janeiro, a Ecosol vem desde 1993 oferecendo soluções em aquecimento solar, instalações hidráulicas, elétricas e Fotovoltaicas. Nascida na Região Oceânica como fabricante de Coletores, a Ecosol especializou-se em projetos e instalações, participando de grandes obras como o maracanã, as arenas olímpicas, indústrias, hospitais, escolas, academias, prédios residenciais e comerciais, além das diversas participações no Programa de Eficiência Energética da ANEEL, com projetos aprovados em todas as macrorregiões do Brasil.\n\tPara o sucesso de seus serviços, a Ecosol conta com um corpo profissional que disponibiliza as seguintes estruturas:\n\t- Equipe de projetos;\n\t- Equipe Técnica;\n\t- Equipe de suporte volante;\n\t- Equipe de retaguarda para suporte permanente;\n\t- Manutenção e reparo de equipamentos\n\tAtualmente, presente em 18 estados do país e com mais de 600 sistemas de energia solar fotovoltaica em operação, a ECOSOL contribui na construção de um futuro mais sustentável para o planeta. Em seu período de atuação, pode-se comprovar experiência e credibilidade junto aos grupos de concessionárias de energia ENEL, Energisa, Equatorial e Neoenergia.''',
         'Vistoria na UC': f'''
-            Com o objetivo de identificar as necessidades e a possibilidade de eficientização da UC, foi realizada, pelo engenheiro eletricista subcontratado Lucas Araújo Pereira, uma vistoria técnica e o levantamento de dados mostrado na tabela na seção “5.2. Levantamento”. Como pode ser observado, a proposta de eficientização contempla a substituição das lâmpadas de tecnologia antiga por novas lâmpadas mais eficientes.\n\tCom as coordenadas geográficas, foi possível verificar o potencial de instalação do sistema Fotovoltaico. As coordenadas encontradas de -4.9654 W, -42.7958 S , foram então inseridas no banco de dados do CRESESB, que resultou no gráfico abaixo. Os resultados obtidos foram posteriormente avaliados para dimensionamento. Foi considerado o sistema fotovoltaico, pois além da representativa economia de energia, os outros usos fins demonstram-se suficientemente eficientes. Segue, levantamento fotográfico das áreas comuns do colégio, no Anexo A.\n\tA vistoria foi realizada em conjunto com os membros da equipe de manutenção do cliente, que visitaram os setores da edificação, com o objetivo de verificar os horários de funcionamentos das áreas, assim como os tipos de lâmpadas e reatores presentes. Com os dados da vistoria em mãos, foi possível então realizar o diagnóstico energético levando em consideração os cálculos preliminares do consumo Energético Anual, Demanda Retirada na Ponta e RCB para a dada proposta''',
+            Com o objetivo de identificar as necessidades e a possibilidade de eficientização da UC, foi realizada, pelo engenheiro eletricista subcontratado {self.project_atributes['Engenheiro Contratado']}, uma vistoria técnica e o levantamento de dados mostrado na tabela na seção “5.2. Levantamento”. Como pode ser observado, a proposta de eficientização contempla a substituição das lâmpadas de tecnologia antiga por novas lâmpadas mais eficientes.\n\tCom as coordenadas geográficas, foi possível verificar o potencial de instalação do sistema Fotovoltaico. As coordenadas encontradas de {self.project_atributes['Coordenada W']} W, {self.project_atributes['Coordenada S']} S , foram então inseridas no banco de dados do CRESESB, que resultou no gráfico abaixo. Os resultados obtidos foram posteriormente avaliados para dimensionamento. Foi considerado o sistema fotovoltaico, pois além da representativa economia de energia, os outros usos fins demonstram-se suficientemente eficientes. Segue, levantamento fotográfico das áreas comuns do colégio, no Anexo A.\n\tA vistoria foi realizada em conjunto com os membros da equipe de manutenção do cliente, que visitaram os setores da edificação, com o objetivo de verificar os horários de funcionamentos das áreas, assim como os tipos de lâmpadas e reatores presentes. Com os dados da vistoria em mãos, foi possível então realizar o diagnóstico energético levando em consideração os cálculos preliminares do consumo Energético Anual, Demanda Retirada na Ponta e RCB para a dada proposta''',
         'Levantamento': 
             [
                 f'''\tA tabela a seguir determina o quantitativo de equipamentos presentes por ambiente e o horário de funcionamento','Como visto no levantamento acima, foram encontrados alguns locais com Iluminação com lâmpadas LED. No entanto ainda assim, foram mapeadas 476 lâmpadas entre lâmpadas florescentes tubulares e compactas, vide levantamento fotográfico realizado no colégio, no anexo A deste documento.''',
@@ -360,9 +363,15 @@ class Relatorio(File):
         self.document.add_heading('2.2. Cliente Beneficiado',2)
         self.table_clients()
 
+        paragraph = self.document.add_paragraph()
+        paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+
     def apresentação_empresa(self):
         self.document.add_heading('4. Apresentação da Empresa Executora',1)
-        self.document.add_paragraph(self.set_paragraphs('Apresentação da Empresa'))
+        paragraph = self.document.add_paragraph()
+        paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+        paragraph.add_run(self.set_paragraphs('Apresentação da Empresa'))
+        
     #Function to make a client data table
     def table_clients(self):
         self.client_data = (
@@ -1071,17 +1080,30 @@ class Application(Application_Functions):
 
         #making a place to write a resumn of the client
         self.client_description_label = Label(self.page3,text='Descrição do Cliente:',bg='lightgray')
-        self.client_description_label.place(relx=0.01,rely=0.315,relwidth=0.13,relheight=0.06)
+        self.client_description_label.place(relx=0.01,rely=0.515,relwidth=0.13,relheight=0.06)
 
         # self.client_description_entry = Text(self.page3,height=200,width=400)
         self.client_description_entry = Text(self.page3)
-        self.client_description_entry.place(relx=0.01,rely=0.4,relwidth=0.98,relheight=0.35)
+        self.client_description_entry.place(relx=0.01,rely=0.6,relwidth=0.98,relheight=0.35)
 
         #adding a scrollbar to the client description entry
         self.client_description_scrollbar = Scrollbar(self.client_description_entry)
         self.client_description_scrollbar.pack(side=RIGHT,fill=BOTH)
         self.client_description_entry.config(yscrollcommand = self.client_description_scrollbar.set)
         self.client_description_scrollbar.config(command = self.client_description_entry.yview)
+
+        #place to eng eletricista
+        self.eng_elet_label = Label(self.page3, text = 'Eng. Eletricista Contratado:', bg='lightgray')
+        self.eng_elet_label.place(relx=0.5,rely=0.145,relwidth=0.145,relheight=0.1)
+        
+        self.eng_elet_entry = Entry(self.page3)
+        self.eng_elet_entry.place(relx=0.5,rely=0.23,relwidth=0.16,relheight=0.06)
+
+        self.coord_label = Label(self.page3, text='Coordenadas da UC:', bg='lightgray')
+        self.coord_label.place(relx = 0.01, rely = 0.29,relwidth=0.125,relheight=0.1)
+
+        self.coord_w_entry = Entry(self.page3)
+        
 
     def window_buttons(self):
         self.generate_pdf_button = Button(self.root,text = "Gerar PDF",command = self.file_generate)
